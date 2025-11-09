@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carte Élève - MACI Canada</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #0066CC 0%, #003d82 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .card {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #003d82 0%, #0066CC 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 { font-size: 28px; margin-bottom: 10px; }
+        .header p { opacity: 0.9; }
+        
+        .status {
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 20px;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+        
+        .status.active { background: #28a745; }
+        .status.inactive { background: #dc3545; }
+        
+        .photo-section {
+            text-align: center;
+            padding: 30px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .photo {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 5px solid #0066CC;
+            margin-bottom: 20px;
+        }
+        
+        .student-name {
+            font-size: 32px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .student-class {
+            font-size: 20px;
+            color: #0066CC;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .matricule {
+            background: #0066CC;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            display: inline-block;
+            font-family: monospace;
+            font-weight: bold;
+        }
+        
+        .info-section {
+            padding: 30px;
+        }
+        
+        .section-title {
+            font-size: 20px;
+            color: #0066CC;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #0066CC;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .info-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #0066CC;
+        }
+        
+        .info-label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        .info-value {
+            font-size: 16px;
+            color: #333;
+            font-weight: bold;
+        }
+        
+        .parent-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .parent-card.father { border-left: 4px solid #007bff; }
+        .parent-card.mother { border-left: 4px solid #e83e8c; }
+        .parent-card.emergency { border-left: 4px solid #dc3545; }
+        
+        .medical-alert {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .blood-type {
+            background: #dc3545;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            display: inline-block;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        
+        .advantages-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .advantage-card {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        
+        .advantage-name { font-weight: bold; margin-bottom: 5px; }
+        .advantage-discount {
+            background: rgba(255,255,255,0.3);
+            padding: 5px 10px;
+            border-radius: 15px;
+            margin-top: 10px;
+            display: inline-block;
+        }
+        
+        .error-page {
+            text-align: center;
+            padding: 60px 20px;
+        }
+        
+        .error-page h1 { color: #dc3545; font-size: 48px; }
+        
+        @media (max-width: 768px) {
+            .info-grid { grid-template-columns: 1fr; }
+            .student-name { font-size: 24px; }
+        }
+    </style>
+</head>
+<body>
+    <div id="content"></div>
+    
+    <script>
+        async function loadStudent() {
+            const id = window.location.pathname.split('/').pop();
+            const content = document.getElementById('content');
+            
+            try {
+                const response = await fetch(`/api/students/${id}`);
+                if (!response.ok) throw new Error('Élève non trouvé');
+                
+                const student = await response.json();
+                
+                content.innerHTML = `
+                    <div class="card">
+                        <div class="header">
+                            <h1>🍁 MACI Canada</h1>
+                            <p>Academy MACI Canada of Côte d'Ivoire</p>
+                            <span class="status ${student.status}">${student.status === 'active' ? '✓ ACTIF' : '✗ INACTIF'}</span>
+                        </div>
+                        
+                        <div class="photo-section">
+                            <img class="photo" src="${student.photo || 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22150%22 height=%22150%22%3E%3Ctext y=%2280%22 x=%2250%22 font-size=%2260%22%3E%F0%9F%91%A4%3C/text%3E%3C/svg%3E'}" alt="${student.firstName}">
+                            <div class="student-name">${student.firstName} ${student.lastName}</div>
+                            <div class="student-class">${student.class}</div>
+                            <div class="matricule">${student.matricule}</div>
+                        </div>
+                        
+                        ${student.dateOfBirth || student.placeOfBirth || student.gender ? `
+                        <div class="info-section">
+                            <div class="section-title">📋 Informations Personnelles</div>
+                            <div class="info-grid">
+                                ${student.dateOfBirth ? `
+                                <div class="info-item">
+                                    <div class="info-label">Date de naissance</div>
+                                    <div class="info-value">${new Date(student.dateOfBirth).toLocaleDateString('fr-FR')}</div>
+                                </div>
+                                ` : ''}
+                                ${student.placeOfBirth ? `
+                                <div class="info-item">
+                                    <div class="info-label">Lieu de naissance</div>
+                                    <div class="info-value">${student.placeOfBirth}</div>
+                                </div>
+                                ` : ''}
+                                ${student.gender ? `
+                                <div class="info-item">
+                                    <div class="info-label">Sexe</div>
+                                    <div class="info-value">${student.gender === 'M' ? 'Masculin' : 'Féminin'}</div>
+                                </div>
+                                ` : ''}
+                                ${student.schoolYear ? `
+                                <div class="info-item">
+                                    <div class="info-label">Année scolaire</div>
+                                    <div class="info-value">${student.schoolYear}</div>
+                                </div>
+                                ` : ''}
+                                ${student.validUntil ? `
+                                <div class="info-item">
+                                    <div class="info-label">Valide jusqu'au</div>
+                                    <div class="info-value">${new Date(student.validUntil).toLocaleDateString('fr-FR')}</div>
+                                </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                        ` : ''}
+                        
+                        ${student.fatherName || student.motherName || student.emergencyContact ? `
+                        <div class="info-section">
+                            <div class="section-title">👨‍👩‍👧 Contacts</div>
+                            ${student.fatherName ? `
+                            <div class="parent-card father">
+                                <strong style="color: #007bff;">👨 Père</strong>
+                                <div style="margin-top: 10px;">${student.fatherName}</div>
+                                ${student.fatherOccupation ? `<div style="color: #666;">💼 ${student.fatherOccupation}</div>` : ''}
+                                ${student.fatherPhone ? `<div style="color: #666;">📱 ${student.fatherPhone}</div>` : ''}
+                                ${student.fatherEmail ? `<div style="color: #666;">📧 ${student.fatherEmail}</div>` : ''}
+                            </div>
+                            ` : ''}
+                            ${student.motherName ? `
+                            <div class="parent-card mother">
+                                <strong style="color: #e83e8c;">👩 Mère</strong>
+                                <div style="margin-top: 10px;">${student.motherName}</div>
+                                ${student.motherOccupation ? `<div style="color: #666;">💼 ${student.motherOccupation}</div>` : ''}
+                                ${student.motherPhone ? `<div style="color: #666;">📱 ${student.motherPhone}</div>` : ''}
+                                ${student.motherEmail ? `<div style="color: #666;">📧 ${student.motherEmail}</div>` : ''}
+                            </div>
+                            ` : ''}
+                            ${student.emergencyContact ? `
+                            <div class="parent-card emergency">
+                                <strong style="color: #dc3545;">🚨 Contact d'Urgence</strong>
+                                <div style="margin-top: 10px;">${student.emergencyContact}</div>
+                                ${student.emergencyPhone ? `<div style="color: #666;">📱 ${student.emergencyPhone}</div>` : ''}
+                            </div>
+                            ` : ''}
+                        </div>
+                        ` : ''}
+                        
+                        ${student.bloodType || student.allergies || student.medicalNotes ? `
+                        <div class="info-section">
+                            <div class="section-title">🏥 Informations Médicales</div>
+                            <div class="medical-alert">
+                                ${student.bloodType ? `
+                                <div style="margin-bottom: 15px;">
+                                    <strong>Groupe sanguin:</strong>
+                                    <span class="blood-type">${student.bloodType}</span>
+                                </div>
+                                ` : ''}
+                                ${student.allergies ? `
+                                <div style="margin-bottom: 10px;">
+                                    <strong style="color: #dc3545;">⚠️ Allergies:</strong>
+                                    <div style="margin-top: 5px;">${student.allergies}</div>
+                                </div>
+                                ` : ''}
+                                ${student.medicalNotes ? `
+                                <div>
+                                    <strong>Notes médicales:</strong>
+                                    <div style="margin-top: 5px;">${student.medicalNotes}</div>
+                                </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                        ` : ''}
+                        
+                        ${student.address || student.city ? `
+                        <div class="info-section">
+                            <div class="section-title">🏠 Adresse</div>
+                            <div class="info-item">
+                                ${student.address ? `<div>${student.address}</div>` : ''}
+                                ${student.city ? `<div>${student.city}, ${student.country || 'Côte d\'Ivoire'}</div>` : ''}
+                            </div>
+                        </div>
+                        ` : ''}
+                        
+                        ${student.advantages && student.advantages.length > 0 ? `
+                        <div class="info-section">
+                            <div class="section-title">🎁 Avantages & Réductions</div>
+                            <div class="advantages-grid">
+                                ${student.advantages.map(adv => `
+                                    <div class="advantage-card">
+                                        <div class="advantage-name">${adv.name}</div>
+                                        ${adv.description ? `<div style="font-size: 12px; opacity: 0.9;">${adv.description}</div>` : ''}
+                                        ${adv.discount ? `<div class="advantage-discount">${adv.discount}</div>` : ''}
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                        ` : ''}
+                        
+                        <div class="info-section" style="text-align: center; background: #f8f9fa;">
+                            <p style="color: #666; font-size: 14px;">🏫 Academy MACI Canada of Côte d'Ivoire</p>
+                            <p style="color: #666; font-size: 12px; margin-top: 5px;">Cocody Riviera Palmeraie, Abidjan</p>
+                        </div>
+                    </div>
+                `;
+            } catch (error) {
+                content.innerHTML = `
+                    <div class="card error-page">
+                        <h1>❌</h1>
+                        <h2>Carte Non Trouvée</h2>
+                        <p style="color: #666; margin-top: 20px;">Cette carte étudiante n'existe pas ou a été désactivée.</p>
+                    </div>
+                `;
+            }
+        }
+        
+        loadStudent();
+    </script>
+</body>
+</html>
