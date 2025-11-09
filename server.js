@@ -126,7 +126,8 @@ app.get('/api/students/:id', (req, res) => {
 // GET QR Code d'un élève
 app.get('/api/students/:id/qrcode', async (req, res) => {
   try {
-    const qrCodeUrl = `http://localhost:3001/student/${req.params.id}`;
+    const baseUrl = process.env.RENDER_EXTERNAL_URL || `http://localhost:${PORT}`;
+    const qrCodeUrl = `${baseUrl}/student/${req.params.id}`;
     const qrCode = await QRCode.toDataURL(qrCodeUrl, {
       width: 300,
       margin: 2,
@@ -185,7 +186,8 @@ app.post('/api/students', upload.single('photo'), async (req, res) => {
     }
 
     // Générer QR code
-    const qrCodeUrl = `http://localhost:3001/student/${id}`;
+    const baseUrl = process.env.RENDER_EXTERNAL_URL || `http://localhost:${PORT}`;
+    const qrCodeUrl = `${baseUrl}/student/${id}`;
     const qrCode = await QRCode.toDataURL(qrCodeUrl, {
       width: 300,
       margin: 2,
