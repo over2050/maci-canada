@@ -211,12 +211,7 @@
                         </div>
                         
                         <div class="photo-section">
-                            <img class="photo" id="studentPhoto" src="${student.photo || 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22150%22 height=%22150%22%3E%3Ctext y=%2280%22 x=%2250%22 font-size=%2260%22%3E%F0%9F%91%A4%3C/text%3E%3C/svg%3E'}" alt="${student.firstName}">
-                            ${student.photo ? `
-                            <button onclick="downloadPhoto()" style="margin-top: 15px; background: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 14px;">
-                                📥 Télécharger la Photo
-                            </button>
-                            ` : ''}
+                            <img class="photo" src="${student.photo || 'data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22150%22 height=%22150%22%3E%3Ctext y=%2280%22 x=%2250%22 font-size=%2260%22%3E%F0%9F%91%A4%3C/text%3E%3C/svg%3E'}" alt="${student.firstName}">
                             <div class="student-name">${student.firstName} ${student.lastName}</div>
                             <div class="student-class">${student.class}</div>
                             <div class="matricule">${student.matricule}</div>
@@ -356,18 +351,6 @@
                         <p style="color: #666; margin-top: 20px;">Cette carte étudiante n'existe pas ou a été désactivée.</p>
                     </div>
                 `;
-            }
-        }
-        
-        function downloadPhoto() {
-            const photo = document.getElementById('studentPhoto');
-            const photoUrl = photo.src;
-            
-            if (photoUrl && !photoUrl.includes('data:image/svg')) {
-                const link = document.createElement('a');
-                link.href = photoUrl;
-                link.download = `photo-${document.querySelector('.student-name').textContent.replace(/\s+/g, '-')}.jpg`;
-                link.click();
             }
         }
         
