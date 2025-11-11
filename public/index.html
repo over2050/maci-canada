@@ -399,7 +399,7 @@
                 </div>
                 
                 <div class="form-actions">
-                    <button type="submit" class="btn btn-success" style="flex: 1;">
+                    <button type="submit" id="submitBtn" class="btn btn-success" style="flex: 1;">
                         ✅ Créer l'Élève
                     </button>
                     <button type="button" class="btn btn-danger" onclick="closeModal('studentModal')">
@@ -597,7 +597,9 @@
                 advantages = student.advantages || [];
                 renderAdvantages();
                 
+                // Changer le titre et le bouton
                 document.getElementById('modalTitle').textContent = 'Modifier l\'Élève';
+                document.getElementById('submitBtn').innerHTML = '✅ Modifier l\'Élève';
                 document.getElementById('studentModal').classList.add('active');
             } catch (error) {
                 console.error('Erreur chargement élève:', error);
@@ -834,6 +836,7 @@
             document.getElementById('studentForm').reset();
             renderAdvantages();
             document.getElementById('modalTitle').textContent = 'Ajouter un Élève';
+            document.getElementById('submitBtn').innerHTML = '✅ Créer l\'Élève';
             document.getElementById('studentModal').classList.add('active');
         }
         
