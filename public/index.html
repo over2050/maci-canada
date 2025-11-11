@@ -510,13 +510,14 @@
                                 <button style="background: #007bff; color: white; width: 100%; margin-bottom: 10px;" onclick="viewDetails('${student.id}')">
                                     👁️ Voir les Détails
                                 </button>
-                                <div style="display: flex; gap: 10px;">
+                                <div style="display: flex; gap: 5px;">
                                     <button style="background: #ffc107; color: black; flex: 1;" onclick="editStudent('${student.id}')">
-                                        ✏️ Modifier
+                                        ✏️
                                     </button>
                                     <button style="background: #28a745; color: white; flex: 1;" onclick="showQR('${student.id}')">
-                                        📱 QR
+                                        📱
                                     </button>
+                                    ${student.photo ? `<button style="background: #17a2b8; color: white; flex: 1;" onclick="downloadStudentPhoto('${student.photo}', '${student.firstName}-${student.lastName}')" title="Télécharger Photo">📥</button>` : ''}
                                     <button style="background: #dc3545; color: white; flex: 1;" onclick="deleteStudent('${student.id}')">
                                         🗑️
                                     </button>
