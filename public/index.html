@@ -665,7 +665,7 @@
             
             const form = e.target;
             const formData = new FormData(form);
-            formData.append('advantages', JSON.stringify([]));
+            formData.append('advantages', JSON.stringify(advantages));
             
             try {
                 const url = currentEditingId 
@@ -761,6 +761,16 @@
             link.download = `qr-${currentQRData.firstName}-${currentQRData.lastName}.png`;
             link.href = currentQRData.qrCode;
             link.click();
+        }
+        
+        // Télécharger photo élève
+        function downloadStudentPhoto(photoPath, studentName) {
+            if (photoPath && !photoPath.includes('data:image/svg')) {
+                const link = document.createElement('a');
+                link.href = photoPath;
+                link.download = `photo-${studentName.replace(/\s+/g, '-')}.jpg`;
+                link.click();
+            }
         }
         
         function closeQRModal() {
